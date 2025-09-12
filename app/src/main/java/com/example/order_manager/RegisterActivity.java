@@ -23,7 +23,7 @@ import android.util.Log;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText nameEditText, emailEditText, passwordEditText, confirmPasswordEditText;
-    private Button registerButton, exitButton;
+    private Button registerButton, exitButton, loginButton; // 🔹 добавили loginButton
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +37,16 @@ public class RegisterActivity extends AppCompatActivity {
         confirmPasswordEditText = findViewById(R.id.confirmPasswordEditText);
         registerButton = findViewById(R.id.registerButton);
         exitButton = findViewById(R.id.exitButton);
+        loginButton = findViewById(R.id.loginButton); // 🔹 инициализация
 
         registerButton.setOnClickListener(v -> registerUser());
         exitButton.setOnClickListener(v -> finish());
+
+        // 🔹 переход на экран логина
+        loginButton.setOnClickListener(v -> {
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void registerUser() {
@@ -49,8 +56,6 @@ public class RegisterActivity extends AppCompatActivity {
         String password = passwordEditText.getText().toString().trim();
         String confirmPassword = confirmPasswordEditText.getText().toString().trim();
         Log.d("REGISTER", "name=" + name + ", email=" + email + ", password=" + password + ", confirm=" + confirmPassword);
-
-
 
         // Проверка заполненности всех полей
         if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
@@ -67,7 +72,6 @@ public class RegisterActivity extends AppCompatActivity {
         // Определение роли
         String role = email.toLowerCase().contains("admin") ? "admin" : "client";
         String url = "http://10.0.2.2/order_manager/register.php";
-
 
         // Отправка POST-запроса на сервер
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

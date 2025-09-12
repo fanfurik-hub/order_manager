@@ -1,74 +1,95 @@
 package com.example.order_manager;
 
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText emailEditText, phoneEditText;
-    Button loginButton, goRegisterButton;
+    EditText emailInput, passwordInput;
+    Button loginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        emailEditText = findViewById(R.id.emailEditText);
-        phoneEditText = findViewById(R.id.phoneEditText);
-        loginButton = findViewById(R.id.loginButton);
-        goRegisterButton = findViewById(R.id.goRegisterButton);
+        emailInput = findViewById(R.id.emailInput);
+        passwordInput = findViewById(R.id.passwordInput);
+        loginBtn = findViewById(R.id.loginBtn);
 
-        loginButton.setOnClickListener(v -> loginUser());
-        goRegisterButton.setOnClickListener(v ->
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class)));
+        loginBtn.setOnClickListener(v -> loginUser());
     }
 
     private void loginUser() {
-        String email = emailEditText.getText().toString().trim();
-        String phone = phoneEditText.getText().toString().trim();
+        String email = emailInput.getText().toString().trim();
+        String password = passwordInput.getText().toString().trim();
 
-        if (email.isEmpty() || phone.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String url = "http://10.0.2.2/order_manager/login.php";
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+        StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {
-                    if (response.equals("admin")) {
-                        startActivity(new Intent(this, EmployeeMainActivity.class));
-                        finish();
-                    } else if (response.equals("client")) {
-                        startActivity(new Intent(this, ClientMainActivity.class));
-                        finish();
-                    } else {
-                        Toast.makeText(this, response, Toast.LENGTH_SHORT).show();
+                    Log.d("LOGIN_RESPONSE", "Сервер ответил: " + response);
+
+                    try {
+                        JSONObject json = new JSONObject(response);
+                        if (json.getBoolean("success")) {
+                            String role = json.getString("role");
+                            int userId = json.getInt("user_id"); // <- получаем ID пользователя
+
+                            // Сохраняем userId в SharedPreferences
+                            SharedPreferences prefs = getSharedPreferences("myAppPrefs", MODE_PRIVATE);
+                            prefs.edit().putInt("user_id", userId).apply();
+
+                            if (role.equals("admin")) {
+                                startActivity(new Intent(this, EmployeeMainActivity.class));
+                            } else if (role.equals("client")) {
+                                startActivity(new Intent(this, ClientMainActivity.class));
+                            } else {
+                                Toast.makeText(this, "Неизвестная роль: " + role, Toast.LENGTH_SHORT).show();
+                            }
+                            finish();
+                        } else {
+                            Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Log.e("LOGIN_ERROR", "Ошибка парсинга JSON", e);
+                        Toast.makeText(this, "Ошибка обработки ответа. Смотри Logcat", Toast.LENGTH_LONG).show();
                     }
                 },
-                error -> Toast.makeText(this, "Ошибка сети", Toast.LENGTH_SHORT).show()
+                error -> {
+                    Log.e("LOGIN_ERROR", "Volley ошибка", error);
+                    Toast.makeText(this, "Ошибка сети. Смотри Logcat", Toast.LENGTH_LONG).show();
+                }
         ) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("email", email);
-                params.put("phone", phone);
+                params.put("password", password);
                 return params;
             }
         };
 
-        Volley.newRequestQueue(this).add(stringRequest);
+        Volley.newRequestQueue(this).add(request);
     }
 }
