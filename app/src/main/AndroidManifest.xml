@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Разрешение на интернет -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -14,30 +15,37 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Order_manager"
         android:usesCleartextTraffic="true">
+
+        <!-- Активности приложения -->
+        <activity
+            android:name=".EditOrderActivity"
+            android:exported="false" /> <!-- Редактирование заказа -->
+        <activity
+            android:name=".AllOrdersActivity"
+            android:exported="false" /> <!-- Просмотр всех заказов -->
         <activity
             android:name=".MyOrdersActivity"
             android:exported="false" />
         <activity
             android:name=".CreateOrderActivity"
-            android:exported="false" /> <!-- Главная активность с которой стартует приложение -->
+            android:exported="false" />
         <activity
             android:name=".RegisterActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Остальные активности -->
+        </activity>
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
             android:name=".EmployeeMainActivity"
-            android:exported="false" />
+            android:exported="false" /> <!-- Экран сотрудника -->
         <activity
             android:name=".ClientMainActivity"
             android:exported="false" />
-    </application>
 
+    </application>
 </manifest>
