@@ -54,11 +54,12 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject json = new JSONObject(response);
                         if (json.getBoolean("success")) {
                             String role = json.getString("role");
-                            int userId = json.getInt("user_id"); // <- получаем ID пользователя
+                            int userId = json.getInt("user_id"); // <- получаем ID
 
-                            // Сохраняем userId в SharedPreferences
+                            // Сохраняем user_id в SharedPreferences
                             SharedPreferences prefs = getSharedPreferences("myAppPrefs", MODE_PRIVATE);
                             prefs.edit().putInt("user_id", userId).apply();
+                            Log.d("LOGIN_DEBUG", "Сохранили user_id = " + userId);
 
                             if (role.equals("admin")) {
                                 startActivity(new Intent(this, EmployeeMainActivity.class));
