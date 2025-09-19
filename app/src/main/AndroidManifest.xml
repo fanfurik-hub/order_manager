@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Разрешение на интернет -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -15,7 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Order_manager"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".DeleteUserActivity"
+            android:exported="false" />
         <!-- Активности приложения -->
         <activity
             android:name=".EditOrderActivity"
@@ -34,6 +35,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -46,6 +48,6 @@
         <activity
             android:name=".ClientMainActivity"
             android:exported="false" />
-
     </application>
+
 </manifest>

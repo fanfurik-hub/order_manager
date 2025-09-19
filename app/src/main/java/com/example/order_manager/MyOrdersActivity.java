@@ -54,6 +54,13 @@ public class MyOrdersActivity extends AppCompatActivity {
                     try {
                         JSONObject json = new JSONObject(response);
                         if (json.getBoolean("success")) {
+
+                            // 🔹 Покажем какой user_id реально пришёл с сервера
+                            if (json.has("requested_user_id")) {
+                                int requestedUserId = json.getInt("requested_user_id");
+                                Toast.makeText(this, "Загружены заказы user_id=" + requestedUserId, Toast.LENGTH_SHORT).show();
+                            }
+
                             JSONArray orders = json.getJSONArray("orders");
                             ArrayList<HashMap<String, String>> list = new ArrayList<>();
 

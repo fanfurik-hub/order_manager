@@ -21,7 +21,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     EditText emailInput, passwordInput;
-    Button loginBtn;
+    Button loginBtn, backToRegisterBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +31,16 @@ public class LoginActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
         loginBtn = findViewById(R.id.loginBtn);
+        backToRegisterBtn = findViewById(R.id.backToRegisterBtn);
 
         loginBtn.setOnClickListener(v -> loginUser());
+
+        // Обработчик кнопки "Назад к регистрации"
+        backToRegisterBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+            finish(); // чтобы не возвращаться обратно на логин
+        });
     }
 
     private void loginUser() {

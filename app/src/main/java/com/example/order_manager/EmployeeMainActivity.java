@@ -3,7 +3,6 @@ package com.example.order_manager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class EmployeeMainActivity extends AppCompatActivity {
@@ -23,8 +22,11 @@ public class EmployeeMainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        btnDeleteUser.setOnClickListener(v ->
-                Toast.makeText(this, "Удаление пользователя", Toast.LENGTH_SHORT).show());
+        // Переход на экран удаления пользователей
+        btnDeleteUser.setOnClickListener(v -> {
+            Intent intent = new Intent(EmployeeMainActivity.this, DeleteUserActivity.class);
+            startActivity(intent);
+        });
 
         btnBack.setOnClickListener(v -> finish());
     }
