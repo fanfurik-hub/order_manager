@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog; // 🔹 добавь
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,6 +23,11 @@ public class EditOrderActivity extends AppCompatActivity {
 
     String orderId; // сохраняем ID заказа
 
+    // 🔹 список статусов
+    private static final String[] STATUS_OPTIONS = {
+            "Новый", "Принят", "Забран", "В чистке", "Готов", "Доставлен", "Отменён"
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +39,12 @@ public class EditOrderActivity extends AppCompatActivity {
         editPassword = findViewById(R.id.editPassword);
         editDate = findViewById(R.id.editDate);
         editStatus = findViewById(R.id.editStatus);
+
+        // 🔹 делаем поле статуса кликабельным (без клавиатуры) и вешаем диалог
+        editStatus.setFocusable(false);
+        editStatus.setClickable(true);
+        editStatus.setKeyListener(null);
+        editStatus.setOnClickListener(v -> showStatusPicker());
 
         btnSaveOrder = findViewById(R.id.btnSaveOrder);
         btnBackOrder = findViewById(R.id.btnBackOrder);
@@ -79,7 +91,25 @@ public class EditOrderActivity extends AppCompatActivity {
         });
     }
 
-    // AsyncTask для отправки данных
+    // 🔹 диалог выбора статуса
+    private void showStatusPicker() {
+        int preselect = -1;
+        String cur = editStatus.getText() != null ? editStatus.getText().toString() : "";
+        for (int i = 0; i < STATUS_OPTIONS.length; i++) {
+            if (STATUS_OPTIONS[i].equalsIgnoreCase(cur)) { preselect = i; break; }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Выберите статус")
+                .setSingleChoiceItems(STATUS_OPTIONS, preselect, (d, which) -> {
+                    editStatus.setText(STATUS_OPTIONS[which]);
+                    d.dismiss();
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    // AsyncTask для отправки данных (без изменений)
     private class UpdateOrderTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -90,6 +120,10 @@ public class EditOrderActivity extends AppCompatActivity {
                 String password = params[3];
                 String date = params[4];
                 String status = params[5];
+
+                // берём employee_id
+                int employeeId = getSharedPreferences("myAppPrefs", MODE_PRIVATE)
+                        .getInt("user_id", -1);
 
                 URL url = new URL("http://10.0.2.2/order_manager/update_order.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -102,21 +136,20 @@ public class EditOrderActivity extends AppCompatActivity {
                                 "&email=" + URLEncoder.encode(email, "UTF-8") +
                                 "&password=" + URLEncoder.encode(password, "UTF-8") +
                                 "&date=" + URLEncoder.encode(date, "UTF-8") +
-                                "&status=" + URLEncoder.encode(status, "UTF-8");
+                                "&status=" + URLEncoder.encode(status, "UTF-8") +
+                                "&order_id=" + URLEncoder.encode(id, "UTF-8") +
+                                "&new_status=" + URLEncoder.encode(status, "UTF-8") +
+                                "&employee_id=" + URLEncoder.encode(String.valueOf(employeeId), "UTF-8");
 
-                OutputStream os = conn.getOutputStream();
-                os.write(postData.getBytes());
-                os.flush();
-                os.close();
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
+                try (OutputStream os = conn.getOutputStream()) {
+                    os.write(postData.getBytes());
+                    os.flush();
                 }
-                reader.close();
 
+                StringBuilder sb = new StringBuilder();
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                    String line; while ((line = reader.readLine()) != null) sb.append(line);
+                }
                 return sb.toString();
 
             } catch (Exception e) {
