@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,11 +34,11 @@ public class CreateOrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_order);
 
-        // Получаем user_id из SharedPreferences (логика как у тебя была)
+        // Получаем user_id из SharedPreferences
         SharedPreferences prefs = getSharedPreferences("myAppPrefs", MODE_PRIVATE);
         userId = prefs.getInt("user_id", -1);
         if (userId == -1) {
-            Toast.makeText(this, "Ошибка: пользователь не найден", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Ошибка: пользователь не найден. Авторизуйтесь снова", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -54,8 +53,10 @@ public class CreateOrderActivity extends AppCompatActivity {
         myOrdersBtn = findViewById(R.id.myOrdersBtn);
         backBtn = findViewById(R.id.backBtn);
 
+        // Выбор даты
         dateEditText.setOnClickListener(v -> showDatePicker());
 
+        // Автоматический пересчёт цены при вводе
         lengthEditText.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) calculatePrice();
         });
@@ -79,7 +80,8 @@ public class CreateOrderActivity extends AppCompatActivity {
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         new DatePickerDialog(this, (view, y, m, d) -> {
-            dateEditText.setText(y + "-" + (m + 1) + "-" + d);
+            String formattedDate = String.format("%04d-%02d-%02d", y, (m + 1), d);
+            dateEditText.setText(formattedDate);
         }, year, month, day).show();
     }
 
@@ -111,9 +113,7 @@ public class CreateOrderActivity extends AppCompatActivity {
             return;
         }
 
-        // Сохраняем парсинг в try/catch, чтобы не упало приложение — логика сохранена
-        double length;
-        double width;
+        double length, width;
         try {
             length = Double.parseDouble(lengthStr);
             width = Double.parseDouble(widthStr);
@@ -157,9 +157,8 @@ public class CreateOrderActivity extends AppCompatActivity {
         ) {
             @Override
             protected Map<String, String> getParams() {
-                // Передаём исходные строки (чтобы ничего не менять в логике)
                 Map<String, String> params = new HashMap<>();
-                params.put("user_id", String.valueOf(userId)); // настоящий user_id из SharedPreferences
+                params.put("user_id", String.valueOf(userId)); // настоящий user_id
                 params.put("length", lengthStr);
                 params.put("width", widthStr);
                 params.put("date", date);
