@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import android.util.Log;
 
-
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText nameEditText, emailEditText, passwordEditText, confirmPasswordEditText;
@@ -69,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Определение роли
+        // Определение роли (оставляем твою логику)
         String role = email.toLowerCase().contains("admin") ? "admin" : "client";
         String url = "http://10.0.2.2/order_manager/register.php";
 
@@ -79,8 +78,18 @@ public class RegisterActivity extends AppCompatActivity {
                     try {
                         JSONObject obj = new JSONObject(response);
                         if (obj.getBoolean("success")) {
+                            // ✅ Сохраняем user_id сразу после успешной регистрации
+                            int userId = obj.optInt("user_id", -1);
+                            getSharedPreferences("myAppPrefs", MODE_PRIVATE)
+                                    .edit()
+                                    .putInt("user_id", userId)
+                                    .putString("email", email) // полезно для последующих запросов/восстановления
+                                    .apply();
+                            Log.d("REGISTER", "Saved user_id=" + userId);
+
                             Toast.makeText(this, "Регистрация успешна", Toast.LENGTH_SHORT).show();
-                            // Переход в нужную активность в зависимости от роли
+
+                            // Переход в нужную активность в зависимости от роли (как у тебя было)
                             if (role.equals("admin")) {
                                 startActivity(new Intent(this, EmployeeMainActivity.class));
                             } else {
@@ -88,7 +97,8 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                             finish();
                         } else {
-                            Toast.makeText(this, obj.getString("message"), Toast.LENGTH_SHORT).show();
+                            // Оставляем твою логику: просто показываем сообщение
+                            Toast.makeText(this, obj.optString("message", "Ошибка регистрации"), Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
