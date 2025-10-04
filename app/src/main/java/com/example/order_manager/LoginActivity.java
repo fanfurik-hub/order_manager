@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        String url = "http://10.0.2.2/order_manager/login.php";
+        String url = "http://192.168.1.4/order_manager/login.php";
 
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {

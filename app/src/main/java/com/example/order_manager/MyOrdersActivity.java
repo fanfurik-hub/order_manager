@@ -47,7 +47,7 @@ public class MyOrdersActivity extends AppCompatActivity {
     }
 
     private void fetchOrders() {
-        String url = "http://10.0.2.2/order_manager/get_orders.php?user_id=" + userId;
+        String url = "http://192.168.1.4/order_manager/get_orders.php?user_id=" + userId;
 
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 response -> {

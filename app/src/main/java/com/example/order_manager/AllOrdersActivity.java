@@ -45,7 +45,7 @@ public class AllOrdersActivity extends AppCompatActivity {
             ArrayList<String> ordersList = new ArrayList<>();
             try {
                 // Меняем URL на твой PHP скрипт (оставил 10.0.2.2 для эмулятора)
-                URL url = new URL("http://10.0.2.2/order_manager/get_all_orders.php");
+                URL url = new URL("http://192.168.1.4/order_manager/get_all_orders.php");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
 

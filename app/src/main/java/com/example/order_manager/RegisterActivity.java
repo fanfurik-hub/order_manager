@@ -70,7 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Определение роли (оставляем твою логику)
         String role = email.toLowerCase().contains("admin") ? "admin" : "client";
-        String url = "http://10.0.2.2/order_manager/register.php";
+        String url = "http://192.168.1.4/order_manager/register.php";
 
         // Отправка POST-запроса на сервер
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

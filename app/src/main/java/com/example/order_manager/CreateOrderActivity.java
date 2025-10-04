@@ -124,7 +124,7 @@ public class CreateOrderActivity extends AppCompatActivity {
 
         double price = length * width * pricePerSqM;
 
-        String url = "http://10.0.2.2/order_manager/create_order.php";
+        String url = "http://192.168.1.4/order_manager/create_order.php";
 
         Log.d("ORDER_DEBUG", "Отправляем заказ -> user_id=" + userId +
                 ", length=" + length + ", width=" + width + ", price=" + price + ", date=" + date);

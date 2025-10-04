@@ -54,7 +54,7 @@ public class DeleteUserActivity extends AppCompatActivity {
 
     // Метод загрузки пользователей
     private void loadUsers() {
-        String url = "http://10.0.2.2/order_manager/get_users.php";
+        String url = "http://192.168.1.4/order_manager/get_users.php";
 
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 response -> {
@@ -103,7 +103,7 @@ public class DeleteUserActivity extends AppCompatActivity {
 
     // Метод удаления
     private void deleteUser(int userId) {
-        String url = "http://10.0.2.2/order_manager/delete_user.php?id=" + userId;
+        String url = "http://192.168.1.4/order_manager/delete_user.php?id=" + userId;
 
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 response -> {

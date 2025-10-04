@@ -125,7 +125,7 @@ public class EditOrderActivity extends AppCompatActivity {
                 int employeeId = getSharedPreferences("myAppPrefs", MODE_PRIVATE)
                         .getInt("user_id", -1);
 
-                URL url = new URL("http://10.0.2.2/order_manager/update_order.php");
+                URL url = new URL("http://192.168.1.4/order_manager/update_order.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);
